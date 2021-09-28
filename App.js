@@ -1,71 +1,24 @@
-import React, { useState, useRef } from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-} from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
-import MapViewDirections from 'react-native-maps-directions';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Home from './src/screens/home';
+import ChooseLocation from './src/screens/chooseLocation';
 
 
 
+const Stack = createNativeStackNavigator();
 
-const App= () => {
-
-const [state, setState] = useState({
-  pickupCords: {
-    latitude: 31.5204,
-    longitude: 74.3587,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  },
-  droplocationCords: {
-    latitude: 31.7167,
-    longitude: 73.9850,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  }
-})
-const mapRef = useRef()
-const{pickupCords, droplocationCords} = state
-
+function App() {
   return (
-    <SafeAreaView style={{ flex:1 ,backgroundColor:'red'}}>
-      <MapView
-        ref= {mapRef}
-        style={StyleSheet.absoluteFill}
-        initialRegion={pickupCords}
-      >
-          <Marker
-            coordinate={pickupCords}
-          />
-          <Marker
-            coordinate={droplocationCords }
-          />
-          <MapViewDirections
-            origin={pickupCords}
-            destination={droplocationCords}
-            apikey={"AIzaSyBK60wu292yLRtOcFSSWXkjnmEqTE9UI04"}
-            strokeWidth= {3}
-            strokeColor={'red'}
-            optimizeWaypoints={true}
-            onReady = {result => {
-              mapRef.current.fitToCoordinates(result.coordinates,{
-                 edgePadding: {
-                   right: 50,
-                   bottom: 300,
-                   left:50,
-                   bottom: 100, 
-                 }
-              })
-            }}
-          />
-      </MapView>
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home" >
+        <Stack.Screen name="home" component={Home}/>
+        <Stack.Screen name="chooseLocation" component={ChooseLocation}/>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
-const styles = StyleSheet.create({
-
-});
-
 export default App;
+
+//screenOptions={{headerShown: false }}
