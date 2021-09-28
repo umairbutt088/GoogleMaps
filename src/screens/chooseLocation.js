@@ -1,36 +1,77 @@
 import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, SafeAreaView} from 'react-native';
 import AddressPickup from '../components/addressPickup';
 import CustomButton from '../components/customButton';
+import {showError, showSuccess} from '../helper/helperFunction';
 
-const chooseLocation = () => {
+const chooseLocation = props => {
   const navigation = useNavigation();
-  const onDone = () => {
-    navigation.goBack();
+  const [state, setState] = useState({
+    pickupCords: {},
+    destinationCords: {},
+  });
+  const {pickupCords, destinationCords} = state;
+
+  const checkValid = () => {
+    if (Object.keys(pickupCords).length === 0) {
+      showError('Please Enter Your Pickup Location');
+      return false;
+    }
+    if (Object.keys(destinationCords).length === 0) {
+      showError('Please Enter Your Destination Location');
+      return false;
+    }
+    return true;
   };
 
+  const onDone = () => {
+    const isValid = checkValid();
+    console.log('isValid _____!', isValid);
+    if (isValid) {
+      props.route.params.getCordinates({
+        pickupCords,
+        destinationCords,
+      });
+      showSuccess("Your Map is Here...")
+      navigation.goBack();
+    }
+  };
 
   const fetchAddressCords = (lat, lng) => {
-      console.log("latitude===>>>>", lat);
-      console.log("longitude===>>>>", lng);
-  }
+    setState({
+      ...state,
+      pickupCords: {
+        latitude: lat,
+        longitude: lng,
+      },
+    });
+  };
   const fetchDestinationCords = (lat, lng) => {
-      console.log("latitude===>>>>", lat);
-      console.log("longitude===>>>>", lng);
-  }
+    setState({
+      ...state,
+      destinationCords: {
+        latitude: lat,
+        longitude: lng,
+      },
+    });
+  };
+
+  //   console.log("pickupCords===>>>",pickupCords);
+  //   console.log("destinationCords===>>>",destinationCords);
+  console.log('props===>>>', props);
 
   return (
     <SafeAreaView style={styles.container}>
       <AddressPickup
         placeholderText="Choose Your Pickup Location"
         containerStyle={[styles.inputStyle, {zIndex: 10, top: 10}]}
-        fetchAddress = {fetchAddressCords}
+        fetchAddress={fetchAddressCords}
       />
       <AddressPickup
         placeholderText="Choose Your Destination  Location"
         containerStyle={[styles.inputStyle, {zIndex: 5}]}
-        fetchAddress = {fetchDestinationCords}
+        fetchAddress={fetchDestinationCords}
       />
       {/* <TouchableOpacity
           style={styles.BtnMainContainer}>

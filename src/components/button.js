@@ -2,12 +2,17 @@ import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
 const Button = ({navigation}) => {
+
+const onPressLocation = () => {
+  navigation.navigate('chooseLocation', {})
+}
+   
   return (
     <View style={styles.container}>
       <Text style={styles.textStyle}>Where you want to go ...</Text>
       <TouchableOpacity
         style={styles.buttinContainer}
-        onPress={() => navigation.navigate('chooseLocation')}>
+        onPress={onPressLocation}>
         <Text style={styles.textStyle}>Choose your Location</Text>
       </TouchableOpacity>
     </View>

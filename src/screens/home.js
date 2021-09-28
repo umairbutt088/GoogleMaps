@@ -1,9 +1,14 @@
 import React, {useState, useRef} from 'react';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import Button from '../components/button';
-
 
 const Home = ({navigation}) => {
   const [state, setState] = useState({
@@ -22,6 +27,24 @@ const Home = ({navigation}) => {
   });
   const mapRef = useRef();
   const {pickupCords, droplocationCords} = state;
+
+  const onPressLocation = () => {
+    navigation.navigate('chooseLocation', {getCordinates: fetchValues});
+  };
+
+  const fetchValues = data => {
+    setState({
+      pickupCords: {
+          latitude: data.pickupCords.latitude,
+          longitude: data.pickupCords.longitude,
+       },
+      droplocationCords: {
+        latitude: data.destinationCords.latitude,
+        longitude: data.destinationCords.longitude,
+      },
+    });
+    console.log('data====>>>>', data);
+  };
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -42,23 +65,42 @@ const Home = ({navigation}) => {
             onReady={result => {
               mapRef.current.fitToCoordinates(result.coordinates, {
                 edgePadding: {
-                  right: 50,
-                  bottom: 300,
-                  left: 50,
-                  bottom: 100,
+                  right: 30,
+                  Bottom: 300,
+                  left: 30,
+                  Top: 100,
                 },
               });
             }}
           />
         </MapView>
       </View>
-      <Button
-      navigation={navigation}
-      />
+      <View style={styles.container}>
+        <Text style={styles.textStyle}>Where you want to go ...</Text>
+        <TouchableOpacity
+          style={styles.buttinContainer}
+          onPress={onPressLocation}>
+          <Text style={styles.textStyle}>Choose your Location</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    paddingVertical: 10,
+    backgroundColor: '#fff',
+    paddingHorizontal: 10,
+  },
+  textStyle: {fontSize: 15, color: '#000'},
+  buttinContainer: {
+    borderWidth: 1,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+});
 
 export default Home;
