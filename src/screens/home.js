@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -8,9 +8,36 @@ import {
 } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import Button from '../components/button';
+import { locationPermission, getCurrentLocation  } from '../helper/helperFunction';
+// import Button from '../components/button';
 
 const Home = ({navigation}) => {
+
+
+
+    useEffect(() =>{
+        getLiveLocation() 
+        const interval = setInterval(() => {
+            getLiveLocation()
+        }, 60000);
+        return () =>clearInterval(interval) 
+    }, [])
+
+
+
+    const getLiveLocation = async () => {
+        const locPermissionDenied = await locationPermission()
+        if(locPermissionDenied){
+            const {latitude, longitude } = await getCurrentLocation()
+            console.log("get live location after 4 sce");
+            setState({
+                ...state,
+                pickupCords: {latitude, longitude}
+            })
+            // console.log("res====>>>>", res );
+        }
+    }
+
   const [state, setState] = useState({
     pickupCords: {
       latitude: 31.5204,
@@ -19,10 +46,10 @@ const Home = ({navigation}) => {
       longitudeDelta: 0.0421,
     },
     droplocationCords: {
-      latitude: 31.7167,
-      longitude: 73.985,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
+    //   latitude: 31.7167,
+    //   longitude: 73.985,
+    //   latitudeDelta: 0.0922,
+    //   longitudeDelta: 0.0421,
     },
   });
   const mapRef = useRef();
@@ -54,8 +81,9 @@ const Home = ({navigation}) => {
           style={StyleSheet.absoluteFill}
           initialRegion={pickupCords}>
           <Marker coordinate={pickupCords} />
-          <Marker coordinate={droplocationCords} />
-          <MapViewDirections
+          {Object.keys(droplocationCords).length > 0 && (
+            <Marker coordinate={droplocationCords}/>)}
+          {Object.keys(droplocationCords).length > 0 && (<MapViewDirections
             origin={pickupCords}
             destination={droplocationCords}
             apikey={'AIzaSyBK60wu292yLRtOcFSSWXkjnmEqTE9UI04'}
@@ -72,7 +100,7 @@ const Home = ({navigation}) => {
                 },
               });
             }}
-          />
+          />)}
         </MapView>
       </View>
       <View style={styles.container}>
